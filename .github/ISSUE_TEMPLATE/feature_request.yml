@@ -1,0 +1,28 @@
+---
+name: Feature Request
+title: '[feat] '
+labels: ['enhancement']
+assignees: []
+---
+
+## Problem Statement
+What problem does this feature solve?
+
+## Proposed Solution
+Describe the solution you'd like.
+
+## Alternatives Considered
+Other approaches you've thought about.
+
+## Affected Applications
+- [ ] Control Panel
+- [ ] Driver App
+- [ ] Commercial Platform
+- [ ] Shared Packages
+
+## Acceptance Criteria
+- [ ] Criterion 1
+- [ ] Criterion 2
+
+## Mockups / References
+Links to designs, screenshots, or external references.

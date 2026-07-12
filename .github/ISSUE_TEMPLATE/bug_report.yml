@@ -1,0 +1,38 @@
+---
+name: Bug Report
+title: '[bug] '
+labels: ['bug', 'triage']
+assignees: []
+---
+
+## Description
+A clear and concise description of the bug.
+
+## Application
+- [ ] Control Panel (Fleet Management)
+- [ ] Driver App (PWA)
+- [ ] Commercial Platform
+- [ ] Shared Package
+
+## Steps to Reproduce
+1. Go to '...'
+2. Click on '...'
+3. See error
+
+## Expected Behavior
+What should have happened?
+
+## Actual Behavior
+What actually happened?
+
+## Screenshots / Videos
+If applicable.
+
+## Environment
+- Browser: [e.g. Chrome 120, Firefox 121]
+- OS: [e.g. iOS 17, Windows 11]
+- Screen size: [e.g. 1920x1080, 390x844]
+- App version: [e.g. 1.0.0]
+
+## Additional Context
+Add any other context about the problem.

@@ -1,0 +1,38 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source code
+*.ts text diff=typescript
+*.vue text diff=html
+*.css text diff=css
+*.json text diff=json
+*.md text diff=markdown
+*.yml text diff=yaml
+*.yaml text diff=yaml
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.ttf binary
+*.pdf binary
+*.xlsx binary
+*.docx binary
+*.pptx binary
+
+# Lockfile — keep LF
+pnpm-lock.yaml -text diff=packageLock
+
+# Git LFS — large binary assets
+*.pdf filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.woff2 filter=lfs diff=lfs merge=lfs -text

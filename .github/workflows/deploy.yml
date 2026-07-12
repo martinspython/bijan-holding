@@ -1,0 +1,118 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      app:
+        description: 'App to deploy (control-panel, driver-app, commercial, or all)'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - control-panel
+          - driver-app
+          - commercial
+
+concurrency:
+  group: vercel-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+
+jobs:
+  deploy:
+    name: Deploy ${{ matrix.label }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: control-panel
+            label: Fleet Management
+            vercel_project_id: ${{ secrets.VERCEL_PROJECT_ID_CONTROL_PANEL }}
+            vercel_token: ${{ secrets.VERCEL_TOKEN }}
+            domain: fleet.bijan.ir
+          - app: driver-app
+            label: Driver App
+            vercel_project_id: ${{ secrets.VERCEL_PROJECT_ID_DRIVER }}
+            vercel_token: ${{ secrets.VERCEL_TOKEN }}
+            domain: driver.bijan.ir
+          - app: commercial
+            label: Commercial Platform
+            vercel_project_id: ${{ secrets.VERCEL_PROJECT_ID_COMMERCIAL }}
+            vercel_token: ${{ secrets.VERCEL_TOKEN }}
+            domain: commercial.bijan.ir
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel@latest
+
+      - name: Pull Vercel environment
+        run: |
+          vercel pull \
+            --yes \
+            --environment=production \
+            --token=${{ matrix.vercel_token }} \
+            --scope=${{ secrets.VERCEL_ORG_ID }} \
+            --cwd=apps/${{ matrix.app }}
+
+      - name: Build project artifacts
+        run: |
+          vercel build \
+            --prod \
+            --token=${{ matrix.vercel_token }} \
+            --scope=${{ secrets.VERCEL_ORG_ID }} \
+            --cwd=apps/${{ matrix.app }}
+
+      - name: Deploy to production
+        id: deploy
+        run: |
+          url=$(vercel deploy \
+            --prebuilt \
+            --prod \
+            --token=${{ matrix.vercel_token }} \
+            --scope=${{ secrets.VERCEL_ORG_ID }} \
+            --cwd=apps/${{ matrix.app }})
+          echo "deploy_url=$url" >> $GITHUB_OUTPUT
+
+      - name: Alias custom domain
+        run: |
+          vercel alias set \
+            ${{ steps.deploy.outputs.deploy_url }} \
+            ${{ matrix.domain }} \
+            --token=${{ matrix.vercel_token }} \
+            --scope=${{ secrets.VERCEL_ORG_ID }}
+
+      - name: Run Lighthouse CI
+        if: ${{ matrix.app == 'control-panel' }}
+        continue-on-error: true
+        run: |
+          npx @lhci/cli@0.14.x autorun \
+            --upload.target=temporary-public-storage \
+            --collect.url=https://${{ matrix.domain }} \
+            --assert.lighthouse=no
+
+      - name: Notify on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v2
+        with:
+          webhook: ${{ secrets.SLACK_DEPLOY_WEBHOOK }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: "🚨 Deploy failed: ${{ matrix.label }} (${{ matrix.domain }})"

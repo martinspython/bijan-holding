@@ -1,0 +1,25 @@
+# Bijan Holding Digital Suite
+#
+# Each line is a file pattern followed by one or more owners.
+# Order matters: the last matching pattern takes precedence.
+
+# Global owners
+* @bijan-engineering
+
+# Core packages
+packages/types/ @bijan-core
+packages/ui/ @bijan-core
+packages/config/ @bijan-core
+
+# Applications
+apps/control-panel/ @bijan-fleet-team
+apps/driver-app/ @bijan-fleet-team
+apps/commercial/ @bijan-commercial-team
+
+# Infrastructure
+.github/ @bijan-devops
+turbo.json @bijan-devops
+vercel.json @bijan-devops
+
+# Docs
+*.md @bijan-docs

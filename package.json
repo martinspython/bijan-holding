@@ -1,0 +1,51 @@
+{
+  "name": "bijan-holding-digital-suite",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:control-panel": "turbo run dev --filter=@bijan/control-panel",
+    "dev:driver-app": "turbo run dev --filter=@bijan/driver-app",
+    "dev:commercial": "turbo run dev --filter=@bijan/commercial",
+    "build": "turbo run build",
+    "build:control-panel": "turbo run build --filter=@bijan/control-panel",
+    "build:driver-app": "turbo run build --filter=@bijan/driver-app",
+    "build:commercial": "turbo run build --filter=@bijan/commercial",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e",
+    "storybook": "turbo run storybook",
+    "clean": "turbo run clean",
+    "format": "prettier --write \"**/*.{ts,tsx,vue,json,css,md}\"",
+    "prepare": "husky",
+    "commitlint": "commitlint --edit"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,vue}": [
+      "prettier --write",
+      "eslint --fix --max-warnings=0"
+    ],
+    "*.{css,scss,json,md,yaml,yml}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@types/node": "^22.10.0",
+    "husky": "^9.1.0",
+    "lint-staged": "^15.3.0",
+    "prettier": "^3.4.0",
+    "prettier-plugin-tailwindcss": "^0.6.0",
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.0",
+    "vue-tsc": "^2.2.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

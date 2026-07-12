@@ -22,7 +22,7 @@ const statusVariant = (status: string) => {
     case 'shipped': return 'info' as const
     case 'partial': return 'warning' as const
     case 'delivered': return 'success' as const
-    case 'cancelled': return 'error' as const
+    case 'cancelled': return 'destructive' as const
     default: return 'default' as const
   }
 }
@@ -34,7 +34,7 @@ const statusLabel: Record<string, string> = {
 
 const urgencyVariant = (u: string) => {
   switch (u) {
-    case 'critical': return 'error' as const
+    case 'critical': return 'destructive' as const
     case 'high': return 'warning' as const
     case 'normal': return 'default' as const
     default: return 'default' as const

@@ -40,8 +40,8 @@ const riskBadgeVariant = (level: string) => {
   switch (level) {
     case 'low': return 'success' as const
     case 'medium': return 'warning' as const
-    case 'high': return 'error' as const
-    case 'critical': return 'error' as const
+    case 'high': return 'destructive' as const
+    case 'critical': return 'destructive' as const
     default: return 'default' as const
   }
 }
@@ -50,7 +50,7 @@ const statusVariant = (status: string) => {
   switch (status) {
     case 'active': return 'success' as const
     case 'inactive': return 'default' as const
-    case 'blacklisted': return 'error' as const
+    case 'blacklisted': return 'destructive' as const
     case 'pending': return 'warning' as const
     default: return 'default' as const
   }

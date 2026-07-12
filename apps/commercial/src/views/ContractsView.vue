@@ -20,7 +20,7 @@ const statusVariant = (status: string) => {
     case 'active': return 'success' as const
     case 'draft': return 'default' as const
     case 'expired': return 'warning' as const
-    case 'terminated': return 'error' as const
+    case 'terminated': return 'destructive' as const
     case 'pending-renewal': return 'warning' as const
     default: return 'default' as const
   }
@@ -53,7 +53,7 @@ function viewDetail(contract: Contract): void {
 const mileSeverity = (s: string) => {
   switch (s) {
     case 'completed': return 'success' as const
-    case 'overdue': return 'error' as const
+    case 'overdue': return 'destructive' as const
     default: return 'info' as const
   }
 }
@@ -156,7 +156,7 @@ const mileSeverity = (s: string) => {
               <AlertTriangle class="h-4 w-4 text-red-500" /> ریسک‌ها
             </h3>
             <div class="flex flex-wrap gap-2">
-              <BijanBadge v-for="flag in store.selectedContract.riskFlags" :key="flag" variant="error" size="sm">
+              <BijanBadge v-for="flag in store.selectedContract.riskFlags" :key="flag" variant="destructive" size="sm">
                 {{ flag }}
               </BijanBadge>
             </div>

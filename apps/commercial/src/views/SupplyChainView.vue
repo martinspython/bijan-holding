@@ -195,7 +195,7 @@ const disruptedNodes = computed(() =>
             <p class="text-[10px] text-muted-foreground">بار: {{ node.load }}% از {{ node.capacity }}%</p>
           </div>
         </div>
-        <BijanBadge :variant="node.riskLevel === 'low' ? 'success' : node.riskLevel === 'medium' ? 'warning' : 'error'" size="sm">
+        <BijanBadge :variant="node.riskLevel === 'low' ? 'success' : node.riskLevel === 'medium' ? 'warning' : 'destructive'" size="sm">
           {{ node.riskLevel === 'low' ? 'ریسک کم' : node.riskLevel === 'medium' ? 'ریسک متوسط' : 'ریسک بالا' }}
         </BijanBadge>
       </div>

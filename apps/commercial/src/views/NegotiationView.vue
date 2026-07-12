@@ -26,7 +26,7 @@ const stageVariant = (s: string) => {
   switch (s) {
     case 'closing': return 'warning' as const
     case 'awarded': return 'success' as const
-    case 'failed': return 'error' as const
+    case 'failed': return 'destructive' as const
     default: return 'default' as const
   }
 }
@@ -117,7 +117,7 @@ function selectNeg(id: string): void {
                     <div class="flex items-center gap-2 mb-1">
                       <p class="text-sm font-semibold">{{ insight.title }}</p>
                       <BijanBadge
-                        :variant="insight.priority === 'high' ? 'error' : insight.priority === 'medium' ? 'warning' : 'default'"
+                        :variant="insight.priority === 'high' ? 'destructive' : insight.priority === 'medium' ? 'warning' : 'default'"
                         size="sm">
                         {{ insight.priority === 'high' ? 'بالا' : insight.priority === 'medium' ? 'متوسط' : 'پایین' }}
                       </BijanBadge>

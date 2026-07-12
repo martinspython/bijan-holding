@@ -1,3 +1,0 @@
-[build]
-  command = "echo 'Build defined at app level'"
-  publish = "."

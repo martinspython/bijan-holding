@@ -10,7 +10,7 @@
     "clean": "rm -rf .turbo"
   },
   "devDependencies": {
-    "typescript": "^5.7.0",
-    "vue-tsc": "^2.2.0"
+    "typescript": "^7.0.2",
+    "vue-tsc": "^3.3.7"
   }
 }

@@ -1,0 +1,109 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      site:
+        description: 'Site to deploy'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - control-panel
+          - driver-app
+          - commercial
+
+concurrency:
+  group: netlify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy ${{ matrix.label }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: control-panel
+            label: Fleet Management
+            site_id: NETLIFY_SITE_ID_CONTROL_PANEL
+          - app: driver-app
+            label: Driver App
+            site_id: NETLIFY_SITE_ID_DRIVER
+          - app: commercial
+            label: Commercial Platform
+            site_id: NETLIFY_SITE_ID_COMMERCIAL
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Netlify CLI
+        run: pnpm add -g netlify-cli@latest
+
+      - name: Build ${{ matrix.app }}
+        run: pnpm build:${{ matrix.app }}
+
+      - name: Deploy to Netlify
+        id: deploy
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets[matrix.site_id] }}
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            # Production deploy
+            npx netlify deploy \
+              --dir=apps/${{ matrix.app }}/dist \
+              --site=$NETLIFY_SITE_ID \
+              --auth=$NETLIFY_AUTH_TOKEN \
+              --prod \
+              --message="Deploy ${{ matrix.label }} from ${{ github.sha }}"
+          else
+            # Deploy preview
+            url=$(npx netlify deploy \
+              --dir=apps/${{ matrix.app }}/dist \
+              --site=$NETLIFY_SITE_ID \
+              --auth=$NETLIFY_AUTH_TOKEN \
+              --message="Preview ${{ matrix.label }} from ${{ github.ref }}" \
+              --json | jq -r '.deploy_url')
+            echo "preview_url=$url" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment preview URL on PR
+        if: github.event_name == 'pull_request' && steps.deploy.outputs.preview_url
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 **Preview deployed for ${{ matrix.label }}**\n\nURL: ${{ steps.deploy.outputs.preview_url }}`
+            })
+
+      - name: Notify on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v2
+        with:
+          webhook: ${{ secrets.SLACK_DEPLOY_WEBHOOK }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: "🚨 Netlify deploy failed: ${{ matrix.label }}"
